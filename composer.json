@@ -1,5 +1,10 @@
 {
     "description": "Short Payment Descriptor (SPayD) with QR output",
+    "keywords": [
+        "spayd",
+        "qrcode",
+        "qr"
+    ],
     "require": {
         "php": ">=7.1",
         "sunfoxcz/spayd-php": "^1.0",
