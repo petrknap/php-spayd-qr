@@ -1,4 +1,4 @@
-# Short Payment Descriptor with QR output for PHP
+# Short Payment Descriptor (SPayD) with QR output for PHP
 
 It connects [shoptet/spayd-php] and [endroid/qr-code] to one unit.
 
