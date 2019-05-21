@@ -21,8 +21,7 @@ class SpaydQr
         QrCode $qrCode,
         string $iban,
         float $amount,
-        string $currency,
-        int $size
+        string $currency
     ) {
         $this->spayd = $spayd
             ->add(static::IBAN, $iban)
@@ -30,18 +29,16 @@ class SpaydQr
             ->add(static::CURRENCY, $currency);
 
         $this->qrCode = $qrCode;
-        $this->qrCode->setSize($size);
     }
 
-    public static function create(string $iban, float $amount, string $currency, int $size): self
+    public static function create(string $iban, float $amount, string $currency): self
     {
         return new self(
             new Spayd(),
             new QrCode(),
             $iban,
             $amount,
-            $currency,
-            $size
+            $currency
         );
     }
 
@@ -64,8 +61,10 @@ class SpaydQr
         return $this;
     }
 
-    public function getQrCodeContent(): string
+    public function getQrCodeContent(int $size): string
     {
-        return $this->getQrCode()->writeString();
+        $qrCode = $this->getQrCode();
+        $qrCode->setSize($size);
+        return $qrCode->writeString();
     }
 }

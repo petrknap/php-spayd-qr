@@ -12,25 +12,19 @@ class SpaydQrTest extends TestCase
     const IBAN = 'CZ7801000000000000000123';
     const AMOUNT = 799.50;
     const CURRENCY = 'CZK';
-    const SIZE = 64;
 
     public function testFactoryWorks()
     {
         $spaydQr = SpaydQr::create(
             static::IBAN,
             static::AMOUNT,
-            static::CURRENCY,
-            static::SIZE
+            static::CURRENCY
         );
 
         $this->assertInstanceOf(SpaydQr::class, $spaydQr);
         $this->assertEquals(
             'SPD*1.0*ACC:CZ7801000000000000000123*AM:799.50*CC:CZK*CRC32:8a0f48b6',
             $spaydQr->getSpayd()->generate()
-        );
-        $this->assertEquals(
-            static::SIZE,
-            $spaydQr->getQrCode()->getSize()
         );
     }
 
@@ -55,6 +49,7 @@ class SpaydQrTest extends TestCase
     {
         $expectedSpayd = 'Expected SPAYD';
         $expectedQrCode = 'Expected QR code';
+        $expectedSize = 64;
 
         $spayd = $this->getMockBuilder(Spayd::class)
             ->disableOriginalConstructor()
@@ -66,8 +61,11 @@ class SpaydQrTest extends TestCase
 
         $qrCode = $this->getMockBuilder(QrCode::class)
             ->disableOriginalConstructor()
-            ->setMethods(['setText', 'writeString'])
+            ->setMethods(['setSize', 'setText', 'writeString'])
             ->getMock();
+        $qrCode->expects($this->once())
+            ->method('setSize')
+            ->with($expectedSize);
         $qrCode->expects($this->once())
             ->method('setText')
             ->with($expectedSpayd);
@@ -77,7 +75,7 @@ class SpaydQrTest extends TestCase
 
         $this->assertEquals(
             $expectedQrCode,
-            $this->getSpaydQr($spayd, $qrCode)->getQrCodeContent()
+            $this->getSpaydQr($spayd, $qrCode)->getQrCodeContent($expectedSize)
         );
     }
 
@@ -88,8 +86,7 @@ class SpaydQrTest extends TestCase
             $qrCode ?: new QrCode(),
             static::IBAN,
             static::AMOUNT,
-            static::CURRENCY,
-            static::SIZE
+            static::CURRENCY
         );
     }
 }
