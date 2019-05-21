@@ -3,6 +3,7 @@
 namespace PetrKnap\Php\SpaydQr;
 
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\PngWriter;
 use Shoptet\Spayd\Spayd;
 
 class SpaydQr
@@ -33,9 +34,12 @@ class SpaydQr
 
     public static function create(string $iban, float $amount, string $currency): self
     {
+        $qrCode = new QrCode();
+        $qrCode->setWriter(new PngWriter());
+
         return new self(
             new Spayd(),
-            new QrCode(),
+            $qrCode,
             $iban,
             $amount,
             $currency
