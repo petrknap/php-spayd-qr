@@ -11,10 +11,10 @@ use Shoptet\Spayd\Spayd;
 
 class SpaydQr
 {
-    const IBAN = 'ACC';
-    const AMOUNT = 'AM';
-    const CURRENCY = 'CC';
-    const VARIABLE_SYMBOL = 'X-VS';
+    const SPAYD_IBAN = 'ACC';
+    const SPAYD_AMOUNT = 'AM';
+    const SPAYD_CURRENCY = 'CC';
+    const SPAYD_VARIABLE_SYMBOL = 'X-VS';
 
     const QR_SIZE = 300;
     const QR_MARGIN = 0;
@@ -30,9 +30,9 @@ class SpaydQr
         Money $money
     ) {
         $this->spayd = $spayd
-            ->add(static::IBAN, $iban)
-            ->add(static::AMOUNT, $this->getAmount($money))
-            ->add(static::CURRENCY, $money->getCurrency()->getCode());
+            ->add(static::SPAYD_IBAN, $iban)
+            ->add(static::SPAYD_AMOUNT, $this->getAmount($money))
+            ->add(static::SPAYD_CURRENCY, $money->getCurrency()->getCode());
 
         $this->qrCode = $qrCode;
     }
@@ -54,7 +54,7 @@ class SpaydQr
 
     public function setVariableSymbol(int $variableSymbol): self
     {
-        $this->spayd->add(static::VARIABLE_SYMBOL, $variableSymbol);
+        $this->spayd->add(static::SPAYD_VARIABLE_SYMBOL, $variableSymbol);
 
         return $this;
     }

@@ -37,7 +37,7 @@ class SpaydQrTest extends TestCase
             ->willReturnSelf();
         $spayd->expects($this->at(3))
             ->method('add')
-            ->with(SpaydQr::VARIABLE_SYMBOL, 123)
+            ->with(SpaydQr::SPAYD_VARIABLE_SYMBOL, 123)
             ->willReturnSelf();
 
         $this->getSpaydQr($spayd, null)->setVariableSymbol(123);
