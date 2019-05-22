@@ -3,6 +3,7 @@
 namespace PetrKnap\Php\SpaydQr\Test;
 
 use Endroid\QrCode\QrCode;
+use Money\Money;
 use PetrKnap\Php\SpaydQr\SpaydQr;
 use PHPUnit\Framework\TestCase;
 use Shoptet\Spayd\Spayd;
@@ -10,15 +11,12 @@ use Shoptet\Spayd\Spayd;
 class SpaydQrTest extends TestCase
 {
     const IBAN = 'CZ7801000000000000000123';
-    const AMOUNT = 799.50;
-    const CURRENCY = 'CZK';
 
     public function testFactoryWorks()
     {
         $spaydQr = SpaydQr::create(
             static::IBAN,
-            static::AMOUNT,
-            static::CURRENCY
+            Money::CZK(79950)
         );
 
         $this->assertInstanceOf(SpaydQr::class, $spaydQr);
@@ -45,11 +43,29 @@ class SpaydQrTest extends TestCase
         $this->getSpaydQr($spayd, null)->setVariableSymbol(123);
     }
 
-    public function testGetQrCodeContentWorks()
+    public function testGetContentTypeWorks()
     {
-        $expectedSpayd = 'Expected SPAYD';
-        $expectedQrCode = 'Expected QR code';
-        $expectedSize = 64;
+        $expectedContentType = 'Expected content type';
+
+        $qrCode = $this->getMockBuilder(QrCode::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getContentType'])
+            ->getMock();
+        $qrCode->expects($this->once())
+            ->method('getContentType')
+            ->willReturn($expectedContentType);
+
+        $this->assertEquals(
+            $expectedContentType,
+            $this->getSpaydQr(null, $qrCode)->getContentType()
+        );
+    }
+
+    public function testGetContentWorks()
+    {
+        $expectedSPayD = 'Expected SPayD';
+        $expectedContent = 'Expected content';
+        $expectedSize = 200;
 
         $spayd = $this->getMockBuilder(Spayd::class)
             ->disableOriginalConstructor()
@@ -57,7 +73,7 @@ class SpaydQrTest extends TestCase
             ->getMock();
         $spayd->expects($this->once())
             ->method('generate')
-            ->willReturn($expectedSpayd);
+            ->willReturn($expectedSPayD);
 
         $qrCode = $this->getMockBuilder(QrCode::class)
             ->disableOriginalConstructor()
@@ -68,15 +84,80 @@ class SpaydQrTest extends TestCase
             ->with($expectedSize);
         $qrCode->expects($this->once())
             ->method('setText')
-            ->with($expectedSpayd);
+            ->with($expectedSPayD);
         $qrCode->expects($this->once())
             ->method('writeString')
-            ->willReturn($expectedQrCode);
+            ->willReturn($expectedContent);
 
         $this->assertEquals(
-            $expectedQrCode,
-            $this->getSpaydQr($spayd, $qrCode)->getQrCodeContent($expectedSize)
+            $expectedContent,
+            $this->getSpaydQr($spayd, $qrCode)->getContent($expectedSize)
         );
+    }
+
+    public function testGetDataUriWorks()
+    {
+        $expectedSPayD = 'Expected SPayD';
+        $expectedDataUri = 'Expected data URI';
+        $expectedSize = 200;
+
+        $spayd = $this->getMockBuilder(Spayd::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generate'])
+            ->getMock();
+        $spayd->expects($this->once())
+            ->method('generate')
+            ->willReturn($expectedSPayD);
+
+        $qrCode = $this->getMockBuilder(QrCode::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['setSize', 'setText', 'writeDataUri'])
+            ->getMock();
+        $qrCode->expects($this->once())
+            ->method('setSize')
+            ->with($expectedSize);
+        $qrCode->expects($this->once())
+            ->method('setText')
+            ->with($expectedSPayD);
+        $qrCode->expects($this->once())
+            ->method('writeDataUri')
+            ->willReturn($expectedDataUri);
+
+        $this->assertEquals(
+            $expectedDataUri,
+            $this->getSpaydQr($spayd, $qrCode)->getDataUri($expectedSize)
+        );
+    }
+
+    public function testWriteFileWorks()
+    {
+        $expectedSPayD = 'Expected SPayD';
+        $expectedPath = 'Expected path';
+        $expectedSize = 200;
+
+        $spayd = $this->getMockBuilder(Spayd::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['generate'])
+            ->getMock();
+        $spayd->expects($this->once())
+            ->method('generate')
+            ->willReturn($expectedSPayD);
+
+        $qrCode = $this->getMockBuilder(QrCode::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['setSize', 'setText', 'writeFile'])
+            ->getMock();
+        $qrCode->expects($this->once())
+            ->method('setSize')
+            ->with($expectedSize);
+        $qrCode->expects($this->once())
+            ->method('setText')
+            ->with($expectedSPayD);
+        $qrCode->expects($this->once())
+            ->method('writeFile')
+            ->with($expectedPath);
+
+        $this->getSpaydQr($spayd, $qrCode)->writeFile($expectedPath, $expectedSize);
     }
 
     private function getSpaydQr(?Spayd $spayd, ?QrCode $qrCode): SpaydQr
@@ -85,8 +166,7 @@ class SpaydQrTest extends TestCase
             $spayd ?: new Spayd(),
             $qrCode ?: new QrCode(),
             static::IBAN,
-            static::AMOUNT,
-            static::CURRENCY
+            Money::EUR(100)
         );
     }
 }

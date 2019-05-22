@@ -4,6 +4,9 @@ namespace PetrKnap\Php\SpaydQr;
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Money\Currencies\ISOCurrencies;
+use Money\Formatter\DecimalMoneyFormatter;
+use Money\Money;
 use Shoptet\Spayd\Spayd;
 
 class SpaydQr
@@ -21,41 +24,28 @@ class SpaydQr
         Spayd $spayd,
         QrCode $qrCode,
         string $iban,
-        float $amount,
-        string $currency
+        Money $money
     ) {
         $this->spayd = $spayd
             ->add(static::IBAN, $iban)
-            ->add(static::AMOUNT, sprintf('%.2f', $amount))
-            ->add(static::CURRENCY, $currency);
+            ->add(static::AMOUNT, $this->getAmount($money))
+            ->add(static::CURRENCY, $money->getCurrency()->getCode());
 
         $this->qrCode = $qrCode;
     }
 
-    public static function create(string $iban, float $amount, string $currency): self
+    public static function create(string $iban, Money $money): self
     {
         $qrCode = new QrCode();
         $qrCode->setWriter(new PngWriter());
+        $qrCode->setMargin(0);
 
         return new self(
             new Spayd(),
             $qrCode,
             $iban,
-            $amount,
-            $currency
+            $money
         );
-    }
-
-    public function getSpayd(): Spayd
-    {
-        return $this->spayd;
-    }
-
-    public function getQrCode(): QrCode
-    {
-        $this->qrCode->setText($this->spayd->generate());
-
-        return $this->qrCode;
     }
 
     public function setVariableSymbol(int $variableSymbol): self
@@ -65,10 +55,56 @@ class SpaydQr
         return $this;
     }
 
-    public function getQrCodeContent(int $size): string
+    #region Output
+    public function getSpayd(): Spayd
     {
-        $qrCode = $this->getQrCode();
-        $qrCode->setSize($size);
-        return $qrCode->writeString();
+        return $this->spayd;
+    }
+
+    public function getQrCode(): QrCode
+    {
+        return $this->prepareQrCode($this->spayd, null);
+    }
+
+    public function getContentType(): string
+    {
+        return $this->prepareQrCode(null, null)->getContentType();
+    }
+
+    public function getContent(int $size): string
+    {
+        return $this->prepareQrCode($this->spayd, $size)->writeString();
+    }
+
+    public function getDataUri(int $size): string
+    {
+        return $this->prepareQrCode($this->spayd, $size)->writeDataUri();
+    }
+
+    public function writeFile(string $path, int $size): void
+    {
+        $this->prepareQrCode($this->spayd, $size)->writeFile($path);
+    }
+    #endregion
+
+    private function prepareQrCode(?Spayd $spayd, ?int $size): QrCode
+    {
+        if ($spayd) {
+            $this->qrCode->setText($spayd->generate());
+        }
+
+        if ($size) {
+            $this->qrCode->setSize($size);
+        }
+
+        return $this->qrCode;
+    }
+
+    private function getAmount(Money $money): string
+    {
+        $currencies = new ISOCurrencies();
+        $moneyFormatter = new DecimalMoneyFormatter($currencies);
+
+        return $moneyFormatter->format($money);
     }
 }
