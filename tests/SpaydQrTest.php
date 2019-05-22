@@ -81,14 +81,9 @@ class SpaydQrTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['setSize', 'setText', 'writeString'])
             ->getMock();
-        if ($expectedSize) {
-            $qrCode->expects($this->once())
-                ->method('setSize')
-                ->with($expectedSize);
-        } else {
-            $qrCode->expects($this->never())
-                ->method('setSize');
-        }
+        $qrCode->expects($this->once())
+            ->method('setSize')
+            ->with($expectedSize ?: SpaydQr::QR_SIZE);
         $qrCode->expects($this->once())
             ->method('setText')
             ->with($expectedSPayD);
@@ -98,7 +93,9 @@ class SpaydQrTest extends TestCase
 
         $this->assertEquals(
             $expectedContent,
-            $this->getSpaydQr($spayd, $qrCode)->getContent($expectedSize)
+            $expectedSize ?
+                $this->getSpaydQr($spayd, $qrCode)->getContent($expectedSize) :
+                $this->getSpaydQr($spayd, $qrCode)->getContent()
         );
     }
 
@@ -130,14 +127,9 @@ class SpaydQrTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['setSize', 'setText', 'writeDataUri'])
             ->getMock();
-        if ($expectedSize) {
-            $qrCode->expects($this->once())
-                ->method('setSize')
-                ->with($expectedSize);
-        } else {
-            $qrCode->expects($this->never())
-                ->method('setSize');
-        }
+        $qrCode->expects($this->once())
+            ->method('setSize')
+            ->with($expectedSize ?: SpaydQr::QR_SIZE);
         $qrCode->expects($this->once())
             ->method('setText')
             ->with($expectedSPayD);
@@ -147,7 +139,9 @@ class SpaydQrTest extends TestCase
 
         $this->assertEquals(
             $expectedDataUri,
-            $this->getSpaydQr($spayd, $qrCode)->getDataUri($expectedSize)
+            $expectedSize ?
+                $this->getSpaydQr($spayd, $qrCode)->getDataUri($expectedSize) :
+                $this->getSpaydQr($spayd, $qrCode)->getDataUri()
         );
     }
 
@@ -176,14 +170,9 @@ class SpaydQrTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['setSize', 'setText', 'writeFile'])
             ->getMock();
-        if ($expectedSize) {
-            $qrCode->expects($this->once())
-                ->method('setSize')
-                ->with($expectedSize);
-        } else {
-            $qrCode->expects($this->never())
-                ->method('setSize');
-        }
+        $qrCode->expects($this->once())
+            ->method('setSize')
+            ->with($expectedSize ?: SpaydQr::QR_SIZE);
         $qrCode->expects($this->once())
             ->method('setText')
             ->with($expectedSPayD);
@@ -191,7 +180,9 @@ class SpaydQrTest extends TestCase
             ->method('writeFile')
             ->with($expectedPath);
 
-        $this->getSpaydQr($spayd, $qrCode)->writeFile($expectedPath, $expectedSize);
+        $expectedSize ?
+            $this->getSpaydQr($spayd, $qrCode)->writeFile($expectedPath, $expectedSize) :
+            $this->getSpaydQr($spayd, $qrCode)->writeFile($expectedPath);
     }
 
     public function dataWriteFileWorks()

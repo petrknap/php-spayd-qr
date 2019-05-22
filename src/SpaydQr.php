@@ -30,9 +30,9 @@ class SpaydQr
         Money $money
     ) {
         $this->spayd = $spayd
-            ->add(static::SPAYD_IBAN, $iban)
-            ->add(static::SPAYD_AMOUNT, $this->getAmount($money))
-            ->add(static::SPAYD_CURRENCY, $money->getCurrency()->getCode());
+            ->add(self::SPAYD_IBAN, $iban)
+            ->add(self::SPAYD_AMOUNT, $this->getAmount($money))
+            ->add(self::SPAYD_CURRENCY, $money->getCurrency()->getCode());
 
         $this->qrCode = $qrCode;
     }
@@ -41,8 +41,7 @@ class SpaydQr
     {
         $qrCode = new QrCode();
         $qrCode->setWriter(new PngWriter());
-        $qrCode->setSize(static::QR_SIZE);
-        $qrCode->setMargin(static::QR_MARGIN);
+        $qrCode->setMargin(self::QR_MARGIN);
 
         return new self(
             new Spayd(),
@@ -54,7 +53,7 @@ class SpaydQr
 
     public function setVariableSymbol(int $variableSymbol): self
     {
-        $this->spayd->add(static::SPAYD_VARIABLE_SYMBOL, $variableSymbol);
+        $this->spayd->add(self::SPAYD_VARIABLE_SYMBOL, $variableSymbol);
 
         return $this;
     }
@@ -75,17 +74,17 @@ class SpaydQr
         return $this->prepareQrCode(null, null)->getContentType();
     }
 
-    public function getContent(int $size = null): string
+    public function getContent(int $size = self::QR_SIZE): string
     {
         return $this->prepareQrCode($this->spayd, $size)->writeString();
     }
 
-    public function getDataUri(int $size = null): string
+    public function getDataUri(int $size = self::QR_SIZE): string
     {
         return $this->prepareQrCode($this->spayd, $size)->writeDataUri();
     }
 
-    public function writeFile(string $path, int $size = null): void
+    public function writeFile(string $path, int $size = self::QR_SIZE): void
     {
         $this->prepareQrCode($this->spayd, $size)->writeFile($path);
     }
