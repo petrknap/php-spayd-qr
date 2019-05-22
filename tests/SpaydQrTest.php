@@ -61,11 +61,13 @@ class SpaydQrTest extends TestCase
         );
     }
 
-    public function testGetContentWorks()
+    /**
+     * @dataProvider dataGetContentWorks
+     */
+    public function testGetContentWorks(?int $expectedSize)
     {
         $expectedSPayD = 'Expected SPayD';
         $expectedContent = 'Expected content';
-        $expectedSize = 200;
 
         $spayd = $this->getMockBuilder(Spayd::class)
             ->disableOriginalConstructor()
@@ -79,9 +81,14 @@ class SpaydQrTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['setSize', 'setText', 'writeString'])
             ->getMock();
-        $qrCode->expects($this->once())
-            ->method('setSize')
-            ->with($expectedSize);
+        if ($expectedSize) {
+            $qrCode->expects($this->once())
+                ->method('setSize')
+                ->with($expectedSize);
+        } else {
+            $qrCode->expects($this->never())
+                ->method('setSize');
+        }
         $qrCode->expects($this->once())
             ->method('setText')
             ->with($expectedSPayD);
@@ -95,11 +102,21 @@ class SpaydQrTest extends TestCase
         );
     }
 
-    public function testGetDataUriWorks()
+    public function dataGetContentWorks()
+    {
+        return [
+            [123],
+            [null],
+        ];
+    }
+
+    /**
+     * @dataProvider dataGetDataUriWorks
+     */
+    public function testGetDataUriWorks(?int $expectedSize)
     {
         $expectedSPayD = 'Expected SPayD';
         $expectedDataUri = 'Expected data URI';
-        $expectedSize = 200;
 
         $spayd = $this->getMockBuilder(Spayd::class)
             ->disableOriginalConstructor()
@@ -113,9 +130,14 @@ class SpaydQrTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['setSize', 'setText', 'writeDataUri'])
             ->getMock();
-        $qrCode->expects($this->once())
-            ->method('setSize')
-            ->with($expectedSize);
+        if ($expectedSize) {
+            $qrCode->expects($this->once())
+                ->method('setSize')
+                ->with($expectedSize);
+        } else {
+            $qrCode->expects($this->never())
+                ->method('setSize');
+        }
         $qrCode->expects($this->once())
             ->method('setText')
             ->with($expectedSPayD);
@@ -129,11 +151,18 @@ class SpaydQrTest extends TestCase
         );
     }
 
-    public function testWriteFileWorks()
+    public function dataGetDataUriWorks()
+    {
+        return $this->dataGetContentWorks();
+    }
+
+    /**
+     * @dataProvider dataWriteFileWorks
+     */
+    public function testWriteFileWorks(?int $expectedSize)
     {
         $expectedSPayD = 'Expected SPayD';
         $expectedPath = 'Expected path';
-        $expectedSize = 200;
 
         $spayd = $this->getMockBuilder(Spayd::class)
             ->disableOriginalConstructor()
@@ -147,9 +176,14 @@ class SpaydQrTest extends TestCase
             ->disableOriginalConstructor()
             ->setMethods(['setSize', 'setText', 'writeFile'])
             ->getMock();
-        $qrCode->expects($this->once())
-            ->method('setSize')
-            ->with($expectedSize);
+        if ($expectedSize) {
+            $qrCode->expects($this->once())
+                ->method('setSize')
+                ->with($expectedSize);
+        } else {
+            $qrCode->expects($this->never())
+                ->method('setSize');
+        }
         $qrCode->expects($this->once())
             ->method('setText')
             ->with($expectedSPayD);
@@ -158,6 +192,11 @@ class SpaydQrTest extends TestCase
             ->with($expectedPath);
 
         $this->getSpaydQr($spayd, $qrCode)->writeFile($expectedPath, $expectedSize);
+    }
+
+    public function dataWriteFileWorks()
+    {
+        return $this->dataGetContentWorks();
     }
 
     private function getSpaydQr(?Spayd $spayd, ?QrCode $qrCode): SpaydQr

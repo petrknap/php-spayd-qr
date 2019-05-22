@@ -16,6 +16,9 @@ class SpaydQr
     const CURRENCY = 'CC';
     const VARIABLE_SYMBOL = 'X-VS';
 
+    const QR_SIZE = 300;
+    const QR_MARGIN = 0;
+
     private $spayd;
 
     private $qrCode;
@@ -38,7 +41,8 @@ class SpaydQr
     {
         $qrCode = new QrCode();
         $qrCode->setWriter(new PngWriter());
-        $qrCode->setMargin(0);
+        $qrCode->setSize(static::QR_SIZE);
+        $qrCode->setMargin(static::QR_MARGIN);
 
         return new self(
             new Spayd(),
@@ -71,17 +75,17 @@ class SpaydQr
         return $this->prepareQrCode(null, null)->getContentType();
     }
 
-    public function getContent(int $size): string
+    public function getContent(int $size = null): string
     {
         return $this->prepareQrCode($this->spayd, $size)->writeString();
     }
 
-    public function getDataUri(int $size): string
+    public function getDataUri(int $size = null): string
     {
         return $this->prepareQrCode($this->spayd, $size)->writeDataUri();
     }
 
-    public function writeFile(string $path, int $size): void
+    public function writeFile(string $path, int $size = null): void
     {
         $this->prepareQrCode($this->spayd, $size)->writeFile($path);
     }
