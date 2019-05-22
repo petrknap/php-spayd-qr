@@ -3,7 +3,8 @@
     "keywords": [
         "spayd",
         "qrcode",
-        "qr"
+        "qr",
+        "payment"
     ],
     "require": {
         "php": ">=7.1",
