@@ -41,7 +41,6 @@ class SpaydQr
     {
         $qrCode = new QrCode();
         $qrCode->setWriter(new PngWriter());
-        $qrCode->setMargin(self::QR_MARGIN);
 
         return new self(
             new Spayd(),
@@ -66,38 +65,42 @@ class SpaydQr
 
     public function getQrCode(): QrCode
     {
-        return $this->prepareQrCode($this->spayd, null);
+        return $this->prepareQrCode($this->spayd, null, null);
     }
 
     public function getContentType(): string
     {
-        return $this->prepareQrCode(null, null)->getContentType();
+        return $this->prepareQrCode(null, null, null)->getContentType();
     }
 
-    public function getContent(int $size = self::QR_SIZE): string
+    public function getContent(int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): string
     {
-        return $this->prepareQrCode($this->spayd, $size)->writeString();
+        return $this->prepareQrCode($this->spayd, $size, $margin)->writeString();
     }
 
-    public function getDataUri(int $size = self::QR_SIZE): string
+    public function getDataUri(int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): string
     {
-        return $this->prepareQrCode($this->spayd, $size)->writeDataUri();
+        return $this->prepareQrCode($this->spayd, $size, $margin)->writeDataUri();
     }
 
-    public function writeFile(string $path, int $size = self::QR_SIZE): void
+    public function writeFile(string $path, int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): void
     {
-        $this->prepareQrCode($this->spayd, $size)->writeFile($path);
+        $this->prepareQrCode($this->spayd, $size, $margin)->writeFile($path);
     }
     #endregion
 
-    private function prepareQrCode(?Spayd $spayd, ?int $size): QrCode
+    private function prepareQrCode(?Spayd $spayd, ?int $size, ?int $margin): QrCode
     {
-        if ($spayd) {
+        if (null !== $spayd) {
             $this->qrCode->setText($spayd->generate());
         }
 
-        if ($size) {
+        if (null !== $size) {
             $this->qrCode->setSize($size);
+        }
+
+        if (null !== $margin) {
+            $this->qrCode->setMargin($margin);
         }
 
         return $this->qrCode;
