@@ -3,6 +3,7 @@
 namespace PetrKnap\Php\SpaydQr\Test;
 
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
 use PetrKnap\Php\SpaydQr\SpaydQr;
 use PHPUnit\Framework\TestCase;
@@ -24,6 +25,21 @@ class SpaydQrTest extends TestCase
             'SPD*1.0*ACC:CZ7801000000000000000123*AM:799.50*CC:CZK*CRC32:8a0f48b6',
             $spaydQr->getSpayd()->generate()
         );
+    }
+
+    public function testSetWriterWorks()
+    {
+        $writer = $this->getMockBuilder(WriterInterface::class)->getMock();
+        $qrCode = $this->getMockBuilder(QrCode::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['setWriter'])
+            ->getMock();
+        $qrCode->expects($this->once())
+            ->method('setWriter')
+            ->with($writer)
+            ->willReturnSelf();
+
+        $this->getSpaydQr(null, $qrCode)->setWriter($writer);
     }
 
     public function testSetVariableSymbolWorks()

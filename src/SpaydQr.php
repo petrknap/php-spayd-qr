@@ -4,6 +4,7 @@ namespace PetrKnap\Php\SpaydQr;
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
+use Endroid\QrCode\Writer\WriterInterface;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
@@ -37,10 +38,10 @@ class SpaydQr
         $this->qrCode = $qrCode;
     }
 
-    public static function create(string $iban, Money $money): self
+    public static function create(string $iban, Money $money, WriterInterface $writer = null): self
     {
         $qrCode = new QrCode();
-        $qrCode->setWriter(new PngWriter());
+        $qrCode->setWriter($writer ?: new PngWriter());
 
         return new self(
             new Spayd(),
@@ -48,6 +49,13 @@ class SpaydQr
             $iban,
             $money
         );
+    }
+
+    public function setWriter(WriterInterface $writer): self
+    {
+        $this->qrCode->setWriter($writer);
+
+        return $this;
     }
 
     public function setVariableSymbol(int $variableSymbol): self
