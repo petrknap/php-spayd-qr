@@ -16,6 +16,14 @@ class SpaydQr
     const SPAYD_AMOUNT = 'AM';
     const SPAYD_CURRENCY = 'CC';
     const SPAYD_VARIABLE_SYMBOL = 'X-VS';
+    const SPAYD_INVOICE = 'X-INV';
+    const SPAYD_INVOICE_FORMAT = 'SID';
+    const SPAYD_INVOICE_VERSION = '1.0';
+    const SPAYD_INVOICE_ID = 'ID';
+    const SPAYD_INVOICE_ISSUE_DATE = 'DD';
+    const SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER = 'INI';
+    const SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER = 'INR';
+    const SPAYD_INVOICE_MESSAGE = 'MSG';
 
     const QR_SIZE = 300;
     const QR_MARGIN = 0;
@@ -61,6 +69,38 @@ class SpaydQr
     public function setVariableSymbol(int $variableSymbol): self
     {
         $this->spayd->add(self::SPAYD_VARIABLE_SYMBOL, $variableSymbol);
+
+        return $this;
+    }
+
+    /**
+     * @see https://qr-faktura.cz/
+     */
+    public function setInvoice(
+        string $id,
+        \DateTimeInterface $issueDate,
+        int $sellerIdentificationNumber,
+        int $buyerIdentificationNumber,
+        string $description
+    ): self {
+        $normalize = function (string $input): string {
+            return str_replace(
+                ['*', '%2A', '%2a'],
+                ['' , ''   , ''   ],
+                $input
+            );
+        };
+
+        $invoice = implode('%2A', [
+            self::SPAYD_INVOICE_FORMAT, self::SPAYD_INVOICE_VERSION,
+            self::SPAYD_INVOICE_ID . ':' . $normalize($id),
+            self::SPAYD_INVOICE_ISSUE_DATE . ':' . $issueDate->format('Ymd'),
+            self::SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER . ':' . $sellerIdentificationNumber,
+            self::SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER . ':' . $buyerIdentificationNumber,
+            self::SPAYD_INVOICE_MESSAGE . ':' . $normalize($description)
+        ]);
+
+        $this->spayd->add(self::SPAYD_INVOICE, $invoice);
 
         return $this;
     }

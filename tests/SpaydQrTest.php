@@ -3,6 +3,7 @@
 namespace PetrKnap\Php\SpaydQr\Test;
 
 use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
 use PetrKnap\Php\SpaydQr\SpaydQr;
@@ -57,6 +58,29 @@ class SpaydQrTest extends TestCase
             ->willReturnSelf();
 
         $this->getSpaydQr($spayd, null)->setVariableSymbol(123);
+    }
+
+    public function testSetInvoiceWorks()
+    {
+        $spayd = $this->getMockBuilder(Spayd::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['add'])
+            ->getMock();
+        $spayd->expects($this->exactly(4))
+            ->method('add')
+            ->willReturnSelf();
+        $spayd->expects($this->at(3))
+            ->method('add')
+            ->with(SpaydQr::SPAYD_INVOICE, 'SID%2A1.0%2AID:INV123%2ADD:20190603%2AINI:12345678%2AINR:23456789%2AMSG:See https://qr-faktura.cz/')
+            ->willReturnSelf();
+
+        $this->getSpaydQr($spayd, null)->setInvoice(
+            'INV123',
+            new \DateTimeImmutable('2019-06-03'),
+            12345678,
+            23456789,
+            'See *https://qr-faktura.cz/*'
+        );
     }
 
     public function testGetContentTypeWorks()
@@ -208,6 +232,23 @@ class SpaydQrTest extends TestCase
     public function dataWriteFileWorks()
     {
         return $this->dataGetContentWorks();
+    }
+
+    public function testEndToEnd()
+    {
+        $spaydQr = $this->getSpaydQr(new Spayd(), new QrCode())
+            ->setWriter(new SvgWriter())
+            ->setVariableSymbol(123)
+            ->setInvoice(
+                1,
+                new \DateTime('2019-06-05'),
+                2,
+                3,
+                'string'
+            );
+
+        $this->assertNotEmpty($spaydQr->getSpayd()->generate());
+        $this->assertNotEmpty($spaydQr->getQrCode()->getData());
     }
 
     private function getSpaydQr(?Spayd $spayd, ?QrCode $qrCode): SpaydQr
