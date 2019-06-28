@@ -60,7 +60,10 @@ class SpaydQrTest extends TestCase
         $this->getSpaydQr($spayd, null)->setVariableSymbol(123);
     }
 
-    public function testSetInvoiceWorks()
+    /**
+     * @dataProvider dataSetInvoiceWorks
+     */
+    public function testSetInvoiceWorks(?string $stin, ?int $bin, ?string $btin, ?string $description, string $expected)
     {
         $spayd = $this->getMockBuilder(Spayd::class)
             ->disableOriginalConstructor()
@@ -71,16 +74,26 @@ class SpaydQrTest extends TestCase
             ->willReturnSelf();
         $spayd->expects($this->at(3))
             ->method('add')
-            ->with(SpaydQr::SPAYD_INVOICE, 'SID%2A1.0%2AID:INV123%2ADD:20190603%2AINI:12345678%2AINR:23456789%2AMSG:See https://qr-faktura.cz/')
+            ->with(SpaydQr::SPAYD_INVOICE, $expected)
             ->willReturnSelf();
 
         $this->getSpaydQr($spayd, null)->setInvoice(
             'INV123',
             new \DateTimeImmutable('2019-06-03'),
             12345678,
-            23456789,
-            'See *https://qr-faktura.cz/*'
+            $stin,
+            $bin,
+            $btin,
+            $description
         );
+    }
+
+    public function dataSetInvoiceWorks()
+    {
+        return [
+            ['CZ12345678', 23456789, 'CZ23456789', 'See *https://qr-faktura.cz/*', 'SID%2A1.0%2AID:INV123%2ADD:20190603%2AINI:12345678%2AVII:CZ12345678%2AINR:23456789%2AVIR:CZ23456789%2AMSG:See https://qr-faktura.cz/'],
+            [null, null, null, null, 'SID%2A1.0%2AID:INV123%2ADD:20190603%2AINI:12345678'],
+        ];
     }
 
     public function testGetContentTypeWorks()
@@ -243,7 +256,9 @@ class SpaydQrTest extends TestCase
                 1,
                 new \DateTime('2019-06-05'),
                 2,
+                'CZ2',
                 3,
+                'CZ3',
                 'string'
             );
 

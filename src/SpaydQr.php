@@ -22,7 +22,9 @@ class SpaydQr
     const SPAYD_INVOICE_ID = 'ID';
     const SPAYD_INVOICE_ISSUE_DATE = 'DD';
     const SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER = 'INI';
+    const SPAYD_INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER = 'VII';
     const SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER = 'INR';
+    const SPAYD_INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER = 'VIR';
     const SPAYD_INVOICE_MESSAGE = 'MSG';
 
     const QR_SIZE = 300;
@@ -80,8 +82,10 @@ class SpaydQr
         string $id,
         \DateTimeInterface $issueDate,
         int $sellerIdentificationNumber,
-        int $buyerIdentificationNumber,
-        string $description
+        ?string $sellerVatIdentificationNumber,
+        ?int $buyerIdentificationNumber,
+        ?string $buyerVatIdentificationNumber,
+        ?string $description
     ): self {
         $normalize = function (string $input): string {
             return str_replace(
@@ -91,16 +95,18 @@ class SpaydQr
             );
         };
 
-        $invoice = implode('%2A', [
+        $invoice = [
             self::SPAYD_INVOICE_FORMAT, self::SPAYD_INVOICE_VERSION,
             self::SPAYD_INVOICE_ID . ':' . $normalize($id),
             self::SPAYD_INVOICE_ISSUE_DATE . ':' . $issueDate->format('Ymd'),
             self::SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER . ':' . $sellerIdentificationNumber,
-            self::SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER . ':' . $buyerIdentificationNumber,
-            self::SPAYD_INVOICE_MESSAGE . ':' . $normalize($description)
-        ]);
+            $sellerVatIdentificationNumber ? self::SPAYD_INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER . ':' . $normalize($sellerVatIdentificationNumber) : null,
+            $buyerIdentificationNumber ? self::SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER . ':' . $buyerIdentificationNumber : null,
+            $buyerVatIdentificationNumber ? self::SPAYD_INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER . ':' . $normalize($buyerVatIdentificationNumber) : null,
+            $description ? self::SPAYD_INVOICE_MESSAGE . ':' . $normalize($description) : null,
+        ];
 
-        $this->spayd->add(self::SPAYD_INVOICE, $invoice);
+        $this->spayd->add(self::SPAYD_INVOICE, implode('%2A', array_filter($invoice)));
 
         return $this;
     }
