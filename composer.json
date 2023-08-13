@@ -15,11 +15,11 @@
     "WARNING": "This file is updated automatically. All keys will be overwritten, except of 'description', 'require' and 'conflict'.",
     "name": "petrknap/php-spaydqr",
     "homepage": "https://petrknap.github.io/docs/php-spaydqr.html",
-    "license": "MIT",
+    "license": "LGPL-3.0-or-later",
     "authors": [
         {
             "name": "Petr Knap",
-            "email": "dev@petrknap.cz"
+            "email": "8299754+petrknap@users.noreply.github.com"
         }
     ],
     "require-dev": {
