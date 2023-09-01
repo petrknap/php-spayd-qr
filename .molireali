@@ -1,4 +1,10 @@
 authors
+composer PetrKnap\\SpaydQr
+dockerfile php 7.1-cli
+docker-scripts petrknap/php-spaydqr
 donation
+git-crlf "*.bat"
+github-workflow docker "composer ci-script"
+github-workflow linter-docker
 github-workflow linter-php 7.1
 license LGPL-3.0-or-later

@@ -12,4 +12,4 @@ jobs:
       image: php:7.1-cli-alpine
     steps:
       - uses: actions/checkout@v3
-      - run: find . -name '*.php' | xargs -n 1 php -l
+      - run: find . -name '*.php' -exec php -l {} \;
