@@ -1,6 +1,6 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace PetrKnap\Php\SpaydQr;
+namespace PetrKnap\SpaydQr;
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\PngWriter;
@@ -12,23 +12,23 @@ use Shoptet\Spayd\Spayd;
 
 class SpaydQr
 {
-    const SPAYD_IBAN = 'ACC';
-    const SPAYD_AMOUNT = 'AM';
-    const SPAYD_CURRENCY = 'CC';
-    const SPAYD_VARIABLE_SYMBOL = 'X-VS';
-    const SPAYD_INVOICE = 'X-INV';
-    const SPAYD_INVOICE_FORMAT = 'SID';
-    const SPAYD_INVOICE_VERSION = '1.0';
-    const SPAYD_INVOICE_ID = 'ID';
-    const SPAYD_INVOICE_ISSUE_DATE = 'DD';
-    const SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER = 'INI';
-    const SPAYD_INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER = 'VII';
-    const SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER = 'INR';
-    const SPAYD_INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER = 'VIR';
-    const SPAYD_INVOICE_MESSAGE = 'MSG';
+    public const SPAYD_IBAN = 'ACC';
+    public const SPAYD_AMOUNT = 'AM';
+    public const SPAYD_CURRENCY = 'CC';
+    public const SPAYD_VARIABLE_SYMBOL = 'X-VS';
+    public const SPAYD_INVOICE = 'X-INV';
+    public const SPAYD_INVOICE_FORMAT = 'SID';
+    public const SPAYD_INVOICE_VERSION = '1.0';
+    public const SPAYD_INVOICE_ID = 'ID';
+    public const SPAYD_INVOICE_ISSUE_DATE = 'DD';
+    public const SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER = 'INI';
+    public const SPAYD_INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER = 'VII';
+    public const SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER = 'INR';
+    public const SPAYD_INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER = 'VIR';
+    public const SPAYD_INVOICE_MESSAGE = 'MSG';
 
-    const QR_SIZE = 300;
-    const QR_MARGIN = 0;
+    public const QR_SIZE = 300;
+    public const QR_MARGIN = 0;
 
     private $spayd;
 

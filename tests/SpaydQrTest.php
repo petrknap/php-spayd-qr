@@ -1,18 +1,18 @@
-<?php
+<?php declare(strict_types=1);
 
-namespace PetrKnap\Php\SpaydQr\Test;
+namespace PetrKnap\SpaydQr\Test;
 
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
-use PetrKnap\Php\SpaydQr\SpaydQr;
+use PetrKnap\SpaydQr\SpaydQr;
 use PHPUnit\Framework\TestCase;
 use Shoptet\Spayd\Spayd;
 
 class SpaydQrTest extends TestCase
 {
-    const IBAN = 'CZ7801000000000000000123';
+    private const IBAN = 'CZ7801000000000000000123';
 
     public function testFactoryWorks()
     {
@@ -253,7 +253,7 @@ class SpaydQrTest extends TestCase
             ->setWriter(new SvgWriter())
             ->setVariableSymbol(123)
             ->setInvoice(
-                1,
+                '1',
                 new \DateTime('2019-06-05'),
                 2,
                 'CZ2',

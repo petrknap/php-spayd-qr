@@ -1,0 +1,12 @@
+name: Docker
+
+on:
+  pull_request:
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: docker build -t $GITHUB_REPOSITORY:$GITHUB_SHA .
+      - run: docker run $GITHUB_REPOSITORY:$GITHUB_SHA composer ci-script
