@@ -64,7 +64,7 @@ class SpaydQr
 
     public function setVariableSymbol(int $variableSymbol): self
     {
-        $this->spayd->add(self::SPAYD_VARIABLE_SYMBOL, $variableSymbol);
+        $this->spayd->add(self::SPAYD_VARIABLE_SYMBOL, (string) $variableSymbol);
 
         return $this;
     }
