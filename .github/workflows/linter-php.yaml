@@ -9,7 +9,7 @@ jobs:
   PHP:
     runs-on: ubuntu-latest
     container:
-      image: php:7.1-cli-alpine
+      image: php:8.0-cli-alpine
     steps:
       - uses: actions/checkout@v3
       - run: find . -name '*.php' -exec php -l {} \;

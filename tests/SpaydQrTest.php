@@ -17,7 +17,7 @@ class SpaydQrTest extends TestCase
     public function testFactoryWorks()
     {
         $spaydQr = SpaydQr::create(
-            static::IBAN,
+            self::IBAN,
             Money::CZK(79950)
         );
 
@@ -263,7 +263,7 @@ class SpaydQrTest extends TestCase
         return new SpaydQr(
             $spayd ?: new Spayd(),
             $qrCode ?: new QrCode(),
-            static::IBAN,
+            self::IBAN,
             Money::EUR(100)
         );
     }
