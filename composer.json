@@ -27,7 +27,7 @@
   "license": "LGPL-3.0-or-later",
   "name": "petrknap/spayd-qr",
   "require": {
-    "php": ">=7.1",
+    "php": ">=8.2",
     "endroid/qr-code": "^3.5",
     "moneyphp/money": "^3.2",
     "sunfoxcz/spayd-php": "^1.0"
