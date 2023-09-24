@@ -30,22 +30,16 @@ class SpaydQr
     public const QR_SIZE = 300;
     public const QR_MARGIN = 0;
 
-    private $spayd;
-
-    private $qrCode;
-
     public function __construct(
-        Spayd $spayd,
-        QrCode $qrCode,
+        private Spayd $spayd,
+        private QrCode $qrCode,
         string $iban,
         Money $money
     ) {
-        $this->spayd = $spayd
+        $spayd
             ->add(self::SPAYD_IBAN, $iban)
             ->add(self::SPAYD_AMOUNT, $this->getAmount($money))
             ->add(self::SPAYD_CURRENCY, $money->getCurrency()->getCode());
-
-        $this->qrCode = $qrCode;
     }
 
     public static function create(string $iban, Money $money, WriterInterface $writer = null): self
