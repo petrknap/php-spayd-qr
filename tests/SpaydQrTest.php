@@ -60,9 +60,7 @@ class SpaydQrTest extends TestCase
         $this->getSpaydQr($spayd, null)->setVariableSymbol(123);
     }
 
-    /**
-     * @dataProvider dataSetInvoiceWorks
-     */
+    /** @dataProvider dataSetInvoiceWorks */
     public function testSetInvoiceWorks(?string $stin, ?int $bin, ?string $btin, ?string $description, string $expected)
     {
         $spayd = $this->getMockBuilder(Spayd::class)
@@ -114,9 +112,7 @@ class SpaydQrTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider dataGetContentWorks
-     */
+    /** @dataProvider dataGetContentWorks */
     public function testGetContentWorks(?int $expectedSize, ?int $expectedMargin)
     {
         $expectedSPayD = 'Expected SPayD';
@@ -162,9 +158,7 @@ class SpaydQrTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider dataGetDataUriWorks
-     */
+    /** @dataProvider dataGetDataUriWorks */
     public function testGetDataUriWorks(?int $expectedSize, ?int $expectedMargin)
     {
         $expectedSPayD = 'Expected SPayD';
@@ -206,9 +200,7 @@ class SpaydQrTest extends TestCase
         return $this->dataGetContentWorks();
     }
 
-    /**
-     * @dataProvider dataWriteFileWorks
-     */
+    /** @dataProvider dataWriteFileWorks */
     public function testWriteFileWorks(?int $expectedSize, ?int $expectedMargin)
     {
         $expectedSPayD = 'Expected SPayD';

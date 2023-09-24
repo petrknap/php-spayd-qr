@@ -4,15 +4,13 @@ It connects [shoptet/spayd-php] and [endroid/qr-code] to one unit.
 
 ## Example
 
-```html
-<img src="<?=
-
+```php
+echo '<img src="' .
     PetrKnap\SpaydQr\SpaydQr::create(
         'CZ7801000000000000000123',
         Money\Money::CZK(79950)
-    )->getDataUri();
-
-?>" />
+    )->getDataUri()
+. '">';
 ```
 
 
