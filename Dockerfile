@@ -33,4 +33,5 @@ RUN apt-get update \
 # endregion
 
 WORKDIR /app
-COPY . /app
+COPY . .
+RUN composer install

@@ -44,7 +44,6 @@
       "phpcs --colors --standard=PSR12 --exclude=PSR12.Files.OpenTag,PSR12.Files.FileHeader,Generic.Files.LineLength src tests"
     ],
     "ci-script": [
-      "@composer install",
       "@validate",
       "@test"
     ]
