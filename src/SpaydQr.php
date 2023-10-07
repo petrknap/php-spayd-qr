@@ -8,7 +8,7 @@ use Endroid\QrCode\Writer\WriterInterface;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
-use Shoptet\Spayd\Spayd;
+use Sunfox\Spayd\Spayd;
 
 class SpaydQr
 {

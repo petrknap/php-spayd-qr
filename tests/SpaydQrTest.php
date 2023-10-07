@@ -8,7 +8,7 @@ use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
 use PetrKnap\SpaydQr\SpaydQr;
 use PHPUnit\Framework\TestCase;
-use Shoptet\Spayd\Spayd;
+use Sunfox\Spayd\Spayd;
 
 class SpaydQrTest extends TestCase
 {
