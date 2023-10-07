@@ -32,6 +32,10 @@ RUN apt-get update \
 ;
 # endregion
 
+RUN docker-php-ext-install \
+      bcmath \
+;
+
 WORKDIR /app
 COPY . .
 RUN composer install
