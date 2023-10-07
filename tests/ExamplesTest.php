@@ -24,7 +24,7 @@ class ExamplesTest extends TestCase
         $readme = file_get_contents(__DIR__ . '/../README.md');
         $examples = explode('```', $readme);
         for ($i = 1; $i < count($examples); $i += 2) {
-            list($language, $example) = explode("\n", $examples[$i], 2);
+            list($language, $example) = explode(PHP_EOL, $examples[$i], 2);
             if ($language === 'php') {
                 yield [$example, __DIR__ . "/ExamplesTest/readme_{$i}.html"];
             }

@@ -1,21 +1,27 @@
 # Short Payment Descriptor (SPayD) with QR output
 
-It connects [shoptet/spayd-php] and [endroid/qr-code] to one unit.
+It connects [sunfoxcz/spayd-php] and [endroid/qr-code] to one unit.
 
 ## Example
 
 ```php
+use Money\Money;
+use PetrKnap\SpaydQr\SpaydQr;
+
+$iban = 'CZ7801000000000000000123';
+$amount = 799.50;
+
 echo '<img src="' .
-    PetrKnap\SpaydQr\SpaydQr::create(
-        'CZ7801000000000000000123',
-        Money\Money::CZK(79950)
+    SpaydQr::create(
+        $iban,
+        Money::CZK($amount * 100)
     )->getDataUri()
 . '">';
 ```
 
 
 
-[shoptet/spayd-php]:https://github.com/shoptet/spayd-php
+[sunfoxcz/spayd-php]:https://github.com/sunfoxcz/spayd-php
 [endroid/qr-code]:https://github.com/endroid/qr-code
 
 ---
