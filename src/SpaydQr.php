@@ -10,28 +10,11 @@ use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
 use Sunfox\Spayd\Spayd;
 
-class SpaydQr
+class SpaydQr implements SpaydQrInterface
 {
-    public const SPAYD_IBAN = 'ACC';
-    public const SPAYD_AMOUNT = 'AM';
-    public const SPAYD_CURRENCY = 'CC';
-    public const SPAYD_VARIABLE_SYMBOL = 'X-VS';
-    public const SPAYD_INVOICE = 'X-INV';
-    public const SPAYD_INVOICE_FORMAT = 'SID';
-    public const SPAYD_INVOICE_VERSION = '1.0';
-    public const SPAYD_INVOICE_ID = 'ID';
-    public const SPAYD_INVOICE_ISSUE_DATE = 'DD';
-    public const SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER = 'INI';
-    public const SPAYD_INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER = 'VII';
-    public const SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER = 'INR';
-    public const SPAYD_INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER = 'VIR';
-    public const SPAYD_INVOICE_MESSAGE = 'MSG';
-
-    public const QR_SIZE = 300;
-    public const QR_MARGIN = 0;
-
-    public function __construct(
-        private Spayd $spayd,
+    /** @internal */
+    protected function __construct(
+        /** @internal */ protected Spayd $spayd,
         private QrCode $qrCode,
         string $iban,
         Money $money
@@ -55,13 +38,6 @@ class SpaydQr
         );
     }
 
-    public function setWriter(WriterInterface $writer): self
-    {
-        $this->qrCode->setWriter($writer);
-
-        return $this;
-    }
-
     public function setVariableSymbol(int $variableSymbol): self
     {
         $this->spayd->add(self::SPAYD_VARIABLE_SYMBOL, (string) $variableSymbol);
@@ -69,9 +45,6 @@ class SpaydQr
         return $this;
     }
 
-    /**
-     * @see https://qr-faktura.cz/
-     */
     public function setInvoice(
         string $id,
         \DateTimeInterface $issueDate,
@@ -105,15 +78,11 @@ class SpaydQr
         return $this;
     }
 
-    #region Output
-    public function getSpayd(): Spayd
+    public function setWriter(WriterInterface $writer): self
     {
-        return $this->spayd;
-    }
+        $this->qrCode->setWriter($writer);
 
-    public function getQrCode(): QrCode
-    {
-        return $this->prepareQrCode($this->spayd, null, null);
+        return $this;
     }
 
     public function getContentType(): string
@@ -135,19 +104,19 @@ class SpaydQr
     {
         $this->prepareQrCode($this->spayd, $size, $margin)->writeFile($path);
     }
-    #endregion
 
-    private function prepareQrCode(?Spayd $spayd, ?int $size, ?int $margin): QrCode
+    /** @internal */
+    protected function prepareQrCode(?Spayd $spayd, ?int $size, ?int $margin): QrCode
     {
-        if (null !== $spayd) {
+        if ($spayd !== null) {
             $this->qrCode->setText($spayd->generate());
         }
 
-        if (null !== $size) {
+        if ($size !== null) {
             $this->qrCode->setSize($size);
         }
 
-        if (null !== $margin) {
+        if ($margin !== null) {
             $this->qrCode->setMargin($margin);
         }
 

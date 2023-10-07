@@ -21,10 +21,9 @@ class SpaydQrTest extends TestCase
             Money::CZK(79950)
         );
 
-        $this->assertInstanceOf(SpaydQr::class, $spaydQr);
         $this->assertEquals(
             'SPD*1.0*ACC:CZ7801000000000000000123*AM:799.50*CC:CZK*CRC32:8a0f48b6',
-            $spaydQr->getSpayd()->generate()
+            $this->getPrivateProperty($spaydQr, 'spayd')->generate()
         );
     }
 
@@ -258,14 +257,29 @@ class SpaydQrTest extends TestCase
         $this->assertNotEmpty($spaydQr->getQrCode()->getData());
     }
 
-    private function getSpaydQr(?Spayd $spayd, ?QrCode $qrCode): SpaydQr
+    private function getSpaydQr(?Spayd $spayd, ?QrCode $qrCode)
     {
-        return new SpaydQr(
+        return new class (
             $spayd ?: new Spayd(),
             $qrCode ?: new QrCode(),
             self::IBAN,
             Money::EUR(100)
-        );
+        ) extends SpaydQr {
+            public function __construct(...$args)
+            {
+                parent::__construct(...$args);
+            }
+
+            public function getSpayd(): Spayd
+            {
+                return $this->spayd;
+            }
+
+            public function getQrCode(): QrCode
+            {
+                return $this->prepareQrCode($this->spayd, null, null);
+            }
+        };
     }
 
     private function trimArgs(array $args): array
@@ -278,5 +292,13 @@ class SpaydQrTest extends TestCase
             $trimmed[] = $arg;
         }
         return $trimmed;
+    }
+
+    private function getPrivateProperty(object $classInstance, string $propertyName): mixed
+    {
+        $object = new \ReflectionObject($classInstance);
+        $property = $object->getProperty($propertyName);
+        $property->setAccessible(true);
+        return $property->getValue($classInstance);
     }
 }
