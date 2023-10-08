@@ -14,7 +14,7 @@ $amount = 799.50;
 echo '<img src="' .
     SpaydQr::create(
         $iban,
-        Money::CZK($amount * 100)
+        Money::CZK((int)($amount * 100))
     )->getDataUri()
 . '">';
 ```

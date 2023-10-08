@@ -29,7 +29,7 @@
   "require": {
     "php": ">=8.0",
     "endroid/qr-code": "^3.5",
-    "moneyphp/money": "^3.2",
+    "moneyphp/money": "^4.0",
     "sunfoxcz/spayd-php": "^2.0"
   },
   "require-dev": {
