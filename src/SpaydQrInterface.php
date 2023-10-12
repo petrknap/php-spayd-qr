@@ -38,6 +38,7 @@ interface SpaydQrInterface
         ?string $buyerVatIdentificationNumber,
         ?string $description
     ): self;
+    /** @todo create own enum of writers */
     public function setWriter(WriterInterface $writer): self;
 
     public function getContentType(): string;
