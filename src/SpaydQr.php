@@ -2,9 +2,12 @@
 
 namespace PetrKnap\SpaydQr;
 
-use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Builder\BuilderInterface;
+use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\WriterInterface;
+use Endroid\QrCode\Writer\Result\ResultInterface;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
@@ -15,7 +18,7 @@ class SpaydQr implements SpaydQrInterface
     /** @internal */
     protected function __construct(
         /** @internal */ protected Spayd $spayd,
-        private QrCode $qrCode,
+        /** @internal */ protected BuilderInterface $qrCodeBuilder,
         string $iban,
         Money $money
     ) {
@@ -27,12 +30,11 @@ class SpaydQr implements SpaydQrInterface
 
     public static function create(string $iban, Money $money, WriterInterface $writer = null): self
     {
-        $qrCode = new QrCode();
-        $qrCode->setWriter($writer ?: new PngWriter());
-
         return new self(
             new Spayd(),
-            $qrCode,
+            Builder::create()
+                ->writer($writer ?: new PngWriter())
+                ->encoding(new Encoding('UTF-8')),
             $iban,
             $money
         );
@@ -80,47 +82,45 @@ class SpaydQr implements SpaydQrInterface
 
     public function setWriter(WriterInterface $writer): self
     {
-        $this->qrCode->setWriter($writer);
+        $this->qrCodeBuilder->writer($writer);
 
         return $this;
     }
 
     public function getContentType(): string
     {
-        return $this->prepareQrCode(null, null, null)->getContentType();
+        return $this->buildQrCode(null, null)->getMimeType();
     }
 
     public function getContent(int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): string
     {
-        return $this->prepareQrCode($this->spayd, $size, $margin)->writeString();
+        return $this->buildQrCode($size, $margin)->getString();
     }
 
     public function getDataUri(int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): string
     {
-        return $this->prepareQrCode($this->spayd, $size, $margin)->writeDataUri();
+        return $this->buildQrCode($size, $margin)->getDataUri();
     }
 
     public function writeFile(string $path, int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): void
     {
-        $this->prepareQrCode($this->spayd, $size, $margin)->writeFile($path);
+        $this->buildQrCode($size, $margin)->saveToFile($path);
     }
 
     /** @internal */
-    protected function prepareQrCode(?Spayd $spayd, ?int $size, ?int $margin): QrCode
+    protected function buildQrCode(?int $size, ?int $margin): ResultInterface
     {
-        if ($spayd !== null) {
-            $this->qrCode->setText($spayd->generate());
-        }
+        $this->qrCodeBuilder->data($this->spayd->generate());
 
         if ($size !== null) {
-            $this->qrCode->setSize($size);
+            $this->qrCodeBuilder->size($size);
         }
 
         if ($margin !== null) {
-            $this->qrCode->setMargin($margin);
+            $this->qrCodeBuilder->margin($margin);
         }
 
-        return $this->qrCode;
+        return $this->qrCodeBuilder->build();
     }
 
     private function getAmount(Money $money): string

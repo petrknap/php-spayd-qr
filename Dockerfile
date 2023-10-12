@@ -38,4 +38,4 @@ RUN docker-php-ext-install \
 
 WORKDIR /app
 COPY . .
-RUN composer install
+RUN composer update --prefer-lowest
