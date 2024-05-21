@@ -14,4 +14,4 @@ jobs:
       image: hadolint/hadolint:latest-alpine
     steps:
       - uses: actions/checkout@v3
-      - run: find . -name 'Dockerfile' -or -name '*.dockerfile' -exec hadolint {} \;
+      - run: find . -name 'Dockerfile' -or -name '*.dockerfile' | xargs -trn 1 hadolint
