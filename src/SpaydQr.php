@@ -6,8 +6,8 @@ use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Writer\WriterInterface;
 use Endroid\QrCode\Writer\Result\ResultInterface;
+use Endroid\QrCode\Writer\WriterInterface;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
@@ -47,6 +47,65 @@ class SpaydQr implements SpaydQrInterface
         return $this;
     }
 
+    public function setIban(string $iban): self
+    {
+        $this->spayd->add(self::SPAYD_IBAN, $this->sanitizeString($iban, 46));
+        return $this;
+    }
+
+    public function setAltAccount(array $altAccounts): self
+    {
+        $altAccountsJoined = implode(',', array_splice($altAccounts, 0, 2));
+        if (mb_strlen($altAccountsJoined) > 93) {
+            // Take only one
+            $altAccountsJoined = implode(',', array_splice($altAccounts, 0, 1));
+        }
+        $this->spayd->add(self::SPAYD_ALT_ACCOUNT, $altAccountsJoined);
+        return $this;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->spayd->add(self::SPAYD_REFERENCE, $this->sanitizeString($reference, 16));
+        return $this;
+    }
+
+    public function setRecipientName(string $recipientName): self
+    {
+        $this->spayd->add(self::SPAYD_RECIPIENT_NAME, $this->sanitizeString($recipientName, 35, true));
+        return $this;
+    }
+
+    public function setDueDate(string $dueDate): self
+    {
+        $this->spayd->add(self::SPAYD_DUE_DATE, $this->sanitizeString($dueDate, 8));
+        return $this;
+    }
+
+    public function setPaymentType(string $paymentType): self
+    {
+        $this->spayd->add(self::SPAYD_PAYMENT_TYPE, $this->sanitizeString($paymentType, 3, true));
+        return $this;
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->spayd->add(self::SPAYD_MESSAGE, $this->sanitizeString($message, 60, true));
+        return $this;
+    }
+
+    public function setNotificationType(string $notificationType): self
+    {
+        $this->spayd->add(self::SPAYD_NOTIFICATION_TYPE, $this->sanitizeString($notificationType, 1));
+        return $this;
+    }
+
+    public function setNotification(string $notification): self
+    {
+        $this->spayd->add(self::SPAYD_NOTIFICATION, $this->sanitizeString($notification, 320));
+        return $this;
+    }
+
     public function setInvoice(
         string $id,
         \DateTimeInterface $issueDate,
@@ -59,7 +118,7 @@ class SpaydQr implements SpaydQrInterface
         $normalize = function (string $input): string {
             return str_replace(
                 ['*', '%2A', '%2a'],
-                ['' , ''   , ''   ],
+                ['', '', ''],
                 $input
             );
         };
@@ -107,6 +166,16 @@ class SpaydQr implements SpaydQrInterface
         $this->buildQrCode($size, $margin)->saveToFile($path);
     }
 
+    public function getSpayd(): Spayd
+    {
+        return $this->spayd;
+    }
+
+    public function getQrCodeBuilder(): BuilderInterface
+    {
+        return $this->qrCodeBuilder;
+    }
+
     /** @internal */
     protected function buildQrCode(?int $size, ?int $margin): ResultInterface
     {
@@ -129,5 +198,14 @@ class SpaydQr implements SpaydQrInterface
         $moneyFormatter = new DecimalMoneyFormatter($currencies);
 
         return $moneyFormatter->format($money);
+    }
+
+    private function sanitizeString(string $string, int $maxLength, bool $toUppercase = false): string
+    {
+        if ($toUppercase) {
+            $string = mb_strtoupper($string, 'UTF-8');
+        }
+
+        return mb_strcut($string, 0, $maxLength, 'UTF-8');
     }
 }
