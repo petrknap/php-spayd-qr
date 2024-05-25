@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace PetrKnap\SpaydQr;
 
@@ -28,7 +30,10 @@ interface SpaydQrInterface
     public static function create(string $iban, Money $money): self;
 
     public function setVariableSymbol(int $variableSymbol): self;
-    /** @see https://qr-faktura.cz/ */
+
+    /**
+     * @see https://qr-faktura.cz/
+     */
     public function setInvoice(
         string $id,
         \DateTimeInterface $issueDate,
@@ -38,11 +43,17 @@ interface SpaydQrInterface
         ?string $buyerVatIdentificationNumber,
         ?string $description
     ): self;
-    /** @todo create own enum of writers */
+
+    /**
+     * @todo create own enum of writers
+     */
     public function setWriter(WriterInterface $writer): self;
 
     public function getContentType(): string;
+
     public function getContent(int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): string;
+
     public function getDataUri(int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): string;
+
     public function writeFile(string $path, int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): void;
 }

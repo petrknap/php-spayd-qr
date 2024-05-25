@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace PetrKnap\SpaydQr;
 
@@ -6,19 +8,24 @@ use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Encoding\Encoding;
 use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Writer\WriterInterface;
 use Endroid\QrCode\Writer\Result\ResultInterface;
+use Endroid\QrCode\Writer\WriterInterface;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
 use Sunfox\Spayd\Spayd;
 
+/**
+ * @todo make it final
+ */
 class SpaydQr implements SpaydQrInterface
 {
     /** @internal */
     protected function __construct(
-        /** @internal */ protected Spayd $spayd,
-        /** @internal */ protected BuilderInterface $qrCodeBuilder,
+        /** @internal */
+        protected Spayd $spayd,
+        /** @internal */
+        protected BuilderInterface $qrCodeBuilder,
         string $iban,
         Money $money
     ) {
@@ -59,7 +66,7 @@ class SpaydQr implements SpaydQrInterface
         $normalize = function (string $input): string {
             return str_replace(
                 ['*', '%2A', '%2a'],
-                ['' , ''   , ''   ],
+                ['', '', ''],
                 $input
             );
         };

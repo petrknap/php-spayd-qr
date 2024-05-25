@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace PetrKnap\SpaydQr\Test;
+declare(strict_types=1);
+
+namespace PetrKnap\SpaydQr;
 
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Builder\BuilderInterface;
@@ -8,7 +10,6 @@ use Endroid\QrCode\Writer\Result\ResultInterface;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
-use PetrKnap\SpaydQr\SpaydQr;
 use PHPUnit\Framework\TestCase;
 use Sunfox\Spayd\Spayd;
 
