@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace PetrKnap\SpaydQr;
 
-use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
 
 interface SpaydQrInterface
@@ -44,10 +43,7 @@ interface SpaydQrInterface
         ?string $description
     ): self;
 
-    /**
-     * @todo create own enum of writers
-     */
-    public function setWriter(WriterInterface $writer): self;
+    public function setWriter(QrCodeWriter $writer): self;
 
     public function getContentType(): string;
 

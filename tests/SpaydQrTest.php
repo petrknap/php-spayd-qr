@@ -32,11 +32,11 @@ class SpaydQrTest extends TestCase
 
     public function testSetWriterWorks()
     {
-        $writer = $this->getMockBuilder(WriterInterface::class)->getMock();
+        $writer = QrCodeWriter::Svg;
         $qrCodeBuilder = $this->getMockBuilder(BuilderInterface::class)->getMock();
         $qrCodeBuilder->expects($this->once())
             ->method('writer')
-            ->with($writer)
+            ->with($writer->endroid())
             ->willReturnSelf();
 
         $this->getSpaydQr(null, $qrCodeBuilder)->setWriter($writer);
@@ -245,7 +245,7 @@ class SpaydQrTest extends TestCase
     public function testEndToEnd()
     {
         $spaydQr = $this->getSpaydQr(null, null)
-            ->setWriter(new SvgWriter())
+            ->setWriter(QrCodeWriter::Svg)
             ->setVariableSymbol(123)
             ->setInvoice(
                 '1',
