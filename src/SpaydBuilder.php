@@ -12,6 +12,7 @@ use Throwable;
 
 final class SpaydBuilder
 {
+    # region https://qr-faktura.cz/
     private const INVOICE_BUYER_IDENTIFICATION_NUMBER = 'INR';
     private const INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER = 'VIR';
     private const INVOICE_FORMAT = 'SID';
@@ -21,6 +22,7 @@ final class SpaydBuilder
     private const INVOICE_SELLER_IDENTIFICATION_NUMBER = 'INI';
     private const INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER = 'VII';
     private const INVOICE_VERSION = '1.0';
+    # endregion
 
     private function __construct(
         private readonly Spayd $spayd,
