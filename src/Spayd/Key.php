@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\SpaydQr;
+namespace PetrKnap\SpaydQr\Spayd;
 
-/**
- * @see https://qr-platba.cz/pro-vyvojare/specifikace-formatu/
- */
-enum SpaydKey: string
+enum Key: string
 {
-    case AlternativeIban = 'ALT-ACC';
+    case Account = 'ACC';
+    case AlternativeAccount = 'ALT-ACC';
     case Amount = 'AM';
+    case Checksum = 'CRC32';
+    case ConstantSymbol = 'X-KS';
     case CurrencyCode = 'CC';
     case DueDate = 'DT';
-    case Iban = 'ACC';
-    case Invoice = 'X-INV'; # https://qr-faktura.cz/
+    case Invoice = 'X-INV';
     case Message = 'MSG';
     case NotificationType = 'NT';
     case PaymentType = 'PT';
     case RecipientName = 'RN';
     case Reference = 'RF';
+    case SpecificSymbol = 'X-SS';
     case VariableSymbol = 'X-VS';
 }
