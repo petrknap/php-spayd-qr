@@ -1,4 +1,4 @@
-FROM php:8.0-cli
+FROM php:8.1-cli
 
 # region included composer
 # hadolint ignore=DL3008
@@ -26,16 +26,21 @@ RUN apt-get update \
       libmcrypt-dev \
       libpng-dev \
  && docker-php-ext-configure gd \
- && docker-php-ext-install -j$(nproc) gd \
+ && docker-php-ext-install -j"$(nproc)" gd \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
 ;
 # endregion
 
+# region included bcmath
+# hadolint ignore=DL3008
 RUN docker-php-ext-install \
       bcmath \
 ;
+# endregion
 
+# region included composer-library
 WORKDIR /app
 COPY . .
 RUN composer update --prefer-lowest
+# endregion

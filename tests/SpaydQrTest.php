@@ -1,6 +1,8 @@
-<?php declare(strict_types=1);
+<?php
 
-namespace PetrKnap\SpaydQr\Test;
+declare(strict_types=1);
+
+namespace PetrKnap\SpaydQr;
 
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Builder\BuilderInterface;
@@ -8,7 +10,6 @@ use Endroid\QrCode\Writer\Result\ResultInterface;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
-use PetrKnap\SpaydQr\SpaydQr;
 use PHPUnit\Framework\TestCase;
 use Sunfox\Spayd\Spayd;
 
@@ -31,11 +32,11 @@ class SpaydQrTest extends TestCase
 
     public function testSetWriterWorks()
     {
-        $writer = $this->getMockBuilder(WriterInterface::class)->getMock();
+        $writer = QrCodeWriter::Svg;
         $qrCodeBuilder = $this->getMockBuilder(BuilderInterface::class)->getMock();
         $qrCodeBuilder->expects($this->once())
             ->method('writer')
-            ->with($writer)
+            ->with($writer->endroid())
             ->willReturnSelf();
 
         $this->getSpaydQr(null, $qrCodeBuilder)->setWriter($writer);
@@ -244,7 +245,7 @@ class SpaydQrTest extends TestCase
     public function testEndToEnd()
     {
         $spaydQr = $this->getSpaydQr(null, null)
-            ->setWriter(new SvgWriter())
+            ->setWriter(QrCodeWriter::Svg)
             ->setVariableSymbol(123)
             ->setInvoice(
                 '1',

@@ -1,9 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace PetrKnap\SpaydQr;
 
 use Endroid\QrCode\Builder\BuilderInterface;
-use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
 use Sunfox\Spayd\Spayd;
 
@@ -125,7 +126,9 @@ interface SpaydQrInterface
      */
     public function setVariableSymbol(int $variableSymbol): self;
 
-    /** @see https://qr-faktura.cz/ */
+    /**
+     * @see https://qr-faktura.cz/
+     */
     public function setInvoice(
         string $id,
         \DateTimeInterface $issueDate,
@@ -136,8 +139,7 @@ interface SpaydQrInterface
         ?string $description
     ): self;
 
-    /** @todo create own enum of writers */
-    public function setWriter(WriterInterface $writer): self;
+    public function setWriter(QrCodeWriter $writer): self;
 
     public function getContentType(): string;
 
