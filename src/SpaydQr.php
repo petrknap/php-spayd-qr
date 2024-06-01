@@ -59,6 +59,9 @@ class SpaydQr implements SpaydQrInterface
         return $this;
     }
 
+    /**
+     * @param array<int, string> $altAccounts
+     */
     public function setAltAccount(array $altAccounts): self
     {
         $altAccountsJoined = implode(',', array_splice($altAccounts, 0, 2));
