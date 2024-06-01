@@ -55,7 +55,7 @@ interface SpaydQrInterface
      * A list of alternate accounts to the default account given by the ACC value. Individual records have the same format as the ACC field and are separated by a comma.
      * Max 2.
      *
-     * @param array $altAccounts
+     * @param array<int, string> $altAccounts
      * @return self
      */
     public function setAltAccount(array $altAccounts): self;
