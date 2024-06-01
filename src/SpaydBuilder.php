@@ -49,7 +49,7 @@ final class SpaydBuilder
 
     public function remove(SpaydKey|string $key): self
     {
-        $this->spayd->delete(self::getKey($key));
+        $this->spayd->delete(is_string($key) ? $key : $key->value);
 
         return $this;
     }
@@ -57,10 +57,14 @@ final class SpaydBuilder
     /**
      * @throws Exception\CouldNotAddKeyWithValue
      */
-    public function add(SpaydKey|string $key, string $value): self
+    public function add(SpaydKey|string $key, mixed $value): self
     {
         try {
-            $this->spayd->add(self::getKey($key), $value);
+            if (is_string($key)) {
+                $this->spayd->add($key, SpaydValue::normalize(null, $value));
+            } else {
+                $this->spayd->add($key->value, SpaydValue::normalize($key, $value));
+            }
         } catch (Throwable $reason) {
             throw new Exception\CouldNotAddKeyWithValue($reason);
         }
@@ -108,13 +112,5 @@ final class SpaydBuilder
     public static function getCurrencyCode(Money $money): string
     {
         return $money->getCurrency()->getCode();
-    }
-
-    private static function getKey(SpaydKey|string $key): string
-    {
-        if ($key instanceof SpaydKey) {
-            return $key->value;
-        }
-        return $key;
     }
 }

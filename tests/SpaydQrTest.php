@@ -10,7 +10,7 @@ use Money\Money;
 use PHPUnit\Framework\TestCase;
 use Sunfox\Spayd\Spayd;
 
-class SpaydQrTest extends TestCase
+final class SpaydQrTest extends TestCase
 {
     private const IBAN = 'CZ7801000000000000000123';
 

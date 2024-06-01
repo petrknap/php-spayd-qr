@@ -7,7 +7,7 @@ namespace PetrKnap\SpaydQr;
 use PHPUnit\Framework\TestCase;
 use Sunfox\Spayd\Spayd;
 
-class SpaydBuilderTest extends TestCase
+final class SpaydBuilderTest extends TestCase
 {
     public function testBuilds(): void
     {
