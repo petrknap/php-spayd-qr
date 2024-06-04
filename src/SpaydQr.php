@@ -39,8 +39,8 @@ class SpaydQr implements SpaydQrInterface
         return new self(
             new Spayd(),
             Builder::create()
-                ->writer($writer->endroid())
-                ->encoding(new Encoding('UTF-8')),
+                   ->writer($writer->endroid())
+                   ->encoding(new Encoding('UTF-8')),
             $iban,
             $money
         );
@@ -48,8 +48,70 @@ class SpaydQr implements SpaydQrInterface
 
     public function setVariableSymbol(int $variableSymbol): self
     {
-        $this->spayd->add(self::SPAYD_VARIABLE_SYMBOL, (string) $variableSymbol);
+        $this->spayd->add(self::SPAYD_VARIABLE_SYMBOL, (string)$variableSymbol);
 
+        return $this;
+    }
+
+    public function setIban(string $iban): self
+    {
+        $this->spayd->add(self::SPAYD_IBAN, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($iban, 46));
+        return $this;
+    }
+
+    /**
+     * @param array<int, string> $altAccounts
+     */
+    public function setAltAccount(array $altAccounts): self
+    {
+        $altAccountsJoined = implode(',', array_splice($altAccounts, 0, 2));
+        if (mb_strlen($altAccountsJoined) > 93) {
+            // Take only one
+            $altAccountsJoined = implode(',', array_splice($altAccounts, 0, 1));
+        }
+        $this->spayd->add(self::SPAYD_ALT_ACCOUNT, $altAccountsJoined);
+        return $this;
+    }
+
+    public function setReference(string $reference): self
+    {
+        $this->spayd->add(self::SPAYD_REFERENCE, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($reference, 16));
+        return $this;
+    }
+
+    public function setRecipientName(string $recipientName): self
+    {
+        $this->spayd->add(self::SPAYD_RECIPIENT_NAME, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($recipientName, 35, true));
+        return $this;
+    }
+
+    public function setDueDate(string $dueDate): self
+    {
+        $this->spayd->add(self::SPAYD_DUE_DATE, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($dueDate, 8));
+        return $this;
+    }
+
+    public function setPaymentType(string $paymentType): self
+    {
+        $this->spayd->add(self::SPAYD_PAYMENT_TYPE, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($paymentType, 3, true));
+        return $this;
+    }
+
+    public function setMessage(string $message): self
+    {
+        $this->spayd->add(self::SPAYD_MESSAGE, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($message, 60, true));
+        return $this;
+    }
+
+    public function setNotificationType(string $notificationType): self
+    {
+        $this->spayd->add(self::SPAYD_NOTIFICATION_TYPE, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($notificationType, 1));
+        return $this;
+    }
+
+    public function setNotification(string $notification): self
+    {
+        $this->spayd->add(self::SPAYD_NOTIFICATION, \PetrKnap\SpaydQr\Util::sanitizeSpaydValue($notification, 320));
         return $this;
     }
 
@@ -71,13 +133,16 @@ class SpaydQr implements SpaydQrInterface
         };
 
         $invoice = [
-            self::SPAYD_INVOICE_FORMAT, self::SPAYD_INVOICE_VERSION,
+            self::SPAYD_INVOICE_FORMAT,
+            self::SPAYD_INVOICE_VERSION,
             self::SPAYD_INVOICE_ID . ':' . $normalize($id),
             self::SPAYD_INVOICE_ISSUE_DATE . ':' . $issueDate->format('Ymd'),
             self::SPAYD_INVOICE_SELLER_IDENTIFICATION_NUMBER . ':' . $sellerIdentificationNumber,
-            $sellerVatIdentificationNumber ? self::SPAYD_INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER . ':' . $normalize($sellerVatIdentificationNumber) : null,
+            $sellerVatIdentificationNumber ? self::SPAYD_INVOICE_SELLER_VAT_IDENTIFICATION_NUMBER . ':' . $normalize($sellerVatIdentificationNumber)
+                : null,
             $buyerIdentificationNumber ? self::SPAYD_INVOICE_BUYER_IDENTIFICATION_NUMBER . ':' . $buyerIdentificationNumber : null,
-            $buyerVatIdentificationNumber ? self::SPAYD_INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER . ':' . $normalize($buyerVatIdentificationNumber) : null,
+            $buyerVatIdentificationNumber ? self::SPAYD_INVOICE_BUYER_VAT_IDENTIFICATION_NUMBER . ':' . $normalize($buyerVatIdentificationNumber)
+                : null,
             $description ? self::SPAYD_INVOICE_MESSAGE . ':' . $normalize($description) : null,
         ];
 
@@ -111,6 +176,16 @@ class SpaydQr implements SpaydQrInterface
     public function writeFile(string $path, int $size = self::QR_SIZE, int $margin = self::QR_MARGIN): void
     {
         $this->buildQrCode($size, $margin)->saveToFile($path);
+    }
+
+    public function getSpayd(): Spayd
+    {
+        return $this->spayd;
+    }
+
+    public function getQrCodeBuilder(): BuilderInterface
+    {
+        return $this->qrCodeBuilder;
     }
 
     /** @internal */
