@@ -7,7 +7,9 @@ namespace PetrKnap\SpaydQr;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Builder\BuilderInterface;
 use Endroid\QrCode\Encoding\Encoding;
+use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\Result\ResultInterface;
+use Endroid\QrCode\Writer\WriterInterface;
 use Money\Currencies\ISOCurrencies;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
@@ -34,13 +36,13 @@ class SpaydQr implements SpaydQrInterface
             ->add(self::SPAYD_CURRENCY, $money->getCurrency()->getCode());
     }
 
-    public static function create(string $iban, Money $money, QrCodeWriter $writer = QrCodeWriter::Png): self
+    public static function create(string $iban, Money $money, WriterInterface $writer = null): self
     {
         return new self(
             new Spayd(),
             Builder::create()
-                   ->writer($writer->endroid())
-                   ->encoding(new Encoding('UTF-8')),
+                ->writer($writer ?: new PngWriter())
+                ->encoding(new Encoding('UTF-8')),
             $iban,
             $money
         );
@@ -151,9 +153,9 @@ class SpaydQr implements SpaydQrInterface
         return $this;
     }
 
-    public function setWriter(QrCodeWriter $writer): self
+    public function setWriter(WriterInterface $writer): self
     {
-        $this->qrCodeBuilder->writer($writer->endroid());
+        $this->qrCodeBuilder->writer($writer);
 
         return $this;
     }

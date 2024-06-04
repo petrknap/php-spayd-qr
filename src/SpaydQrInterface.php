@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace PetrKnap\SpaydQr;
 
 use Endroid\QrCode\Builder\BuilderInterface;
+use Endroid\QrCode\Writer\WriterInterface;
 use Money\Money;
 use Sunfox\Spayd\Spayd;
 
@@ -139,7 +140,7 @@ interface SpaydQrInterface
         ?string $description
     ): self;
 
-    public function setWriter(QrCodeWriter $writer): self;
+    public function setWriter(WriterInterface $writer): self;
 
     public function getContentType(): string;
 
