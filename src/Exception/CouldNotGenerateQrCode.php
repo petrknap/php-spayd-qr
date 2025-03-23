@@ -7,7 +7,7 @@ namespace PetrKnap\SpaydQr\Exception;
 use PetrKnap\Shorts\ExceptionWrapper;
 use RuntimeException;
 
-final class CouldNotAddKeyWithValue extends RuntimeException implements SpaydBuilderException
+final class CouldNotGenerateQrCode extends RuntimeException implements QrCodeException
 {
     use ExceptionWrapper;
 }

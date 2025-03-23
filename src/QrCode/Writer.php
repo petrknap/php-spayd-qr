@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace PetrKnap\SpaydQr;
+namespace PetrKnap\SpaydQr\QrCode;
 
 use Endroid\QrCode\Writer\PngWriter;
 use Endroid\QrCode\Writer\SvgWriter;
 use Endroid\QrCode\Writer\WebPWriter;
 use Endroid\QrCode\Writer\WriterInterface;
 
-enum QrCodeWriter
+enum Writer
 {
     case Png;
     case Svg;
@@ -18,7 +18,7 @@ enum QrCodeWriter
     /**
      * @internal factory
      */
-    public function endroid(): WriterInterface
+    public function create(): WriterInterface
     {
         return match ($this) {
             self::Png => new PngWriter(),
