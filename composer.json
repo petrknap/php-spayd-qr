@@ -38,7 +38,7 @@
   "name": "petrknap/spayd-qr",
   "require": {
     "php": ">=8.1",
-    "endroid/qr-code": "^5.0",
+    "endroid/qr-code": "^5.0|^6.0",
     "moneyphp/money": "^4.1",
     "petrknap/shorts": "^3.0",
     "sunfoxcz/spayd-php": "^2.0"
