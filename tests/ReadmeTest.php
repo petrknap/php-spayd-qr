@@ -20,7 +20,9 @@ final class ReadmeTest extends TestCase implements MarkdownFileTestInterface
     public static function getExpectedOutputsOfPhpExamples(): iterable
     {
         return [
-            'example' => file_get_contents(__DIR__ . '/ReadmeTest/example.html'),
+            'usage-template' => file_get_contents(__DIR__ . '/ReadmeTest/example.html'),
+            'usage-variable-symbol' => '',
+            'usage-invoice' => '',
         ];
     }
 }
