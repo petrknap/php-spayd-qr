@@ -16,15 +16,12 @@ final class QrCode
     public const SIZE = 300;
     public const WRITER = QrCode\Writer::Png;
 
-    private readonly InnerQrCode $innerQrCode;
     private readonly WriterInterface $writer;
 
     public function __construct(
-        Stringable|string $data,
+        private readonly Stringable|string $data,
         QrCode\Writer|WriterInterface $writer = self::WRITER,
     ) {
-        $innerQrCode = new InnerQrCode((string) $data);
-        $this->innerQrCode = $innerQrCode;
         $this->writer = $writer instanceof WriterInterface ? $writer : $writer->create();
     }
 
@@ -55,11 +52,11 @@ final class QrCode
     private function generate(int $size, int $margin): ResultInterface
     {
         try {
-            $innerQrCode = clone $this->innerQrCode;
-            $innerQrCode->setSize($size);
-            $innerQrCode->setMargin($margin);
-
-            return $this->writer->write($innerQrCode);
+            return $this->writer->write(new InnerQrCode(
+                data: (string) $this->data,
+                size: $size,
+                margin: $margin,
+            ));
         } catch (Throwable $reason) {
             throw new Exception\CouldNotGenerateQrCode($reason);
         }

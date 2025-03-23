@@ -1,6 +1,6 @@
 authors
 composer PetrKnap\\SpaydQr
-dockerfile php 8.1-cli
+dockerfile php 8.2-cli
 docker-scripts petrknap/php-spayd-qr
 donation
 github-templates
