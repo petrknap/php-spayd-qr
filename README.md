@@ -1,8 +1,10 @@
 # Short Payment Descriptor (SPayD) with QR output
 
-It connects [sunfoxcz/spayd-php] and [endroid/qr-code] to one unit.
+PHP library designed to generate bank payments encoded as QR codes, making transactions faster and more convenient.
 
-## Example
+## Usage
+
+Below is a simple example of generating a QR code for a payment order directly in template:
 
 ```php
 use Money\Money;
@@ -17,10 +19,33 @@ echo '<img src="' . QrCode::asDataUri(
 ) . '">';
 ```
 
+The library allows you to customize payment details, such as adding a variable symbol:
 
+```php
+use Money\Money;
+use PetrKnap\SpaydQr\Spayd;
 
-[sunfoxcz/spayd-php]:https://github.com/sunfoxcz/spayd-php
-[endroid/qr-code]:https://github.com/endroid/qr-code
+Spayd::create(
+    account: 'CZ7801000000000000000123',
+    amount: Money::CZK(79950),
+)->withVariableSymbol(20250323001);
+```
+
+Instead of specifying `amount`, you can use `invoice` to define invoice:
+
+```php
+use Money\Money;
+use PetrKnap\SpaydQr\Spayd;
+
+Spayd::create(
+    account: 'CZ7801000000000000000123',
+    invoice: Spayd\Sind::create(
+        id: 'FA20250323001',
+        issueDate: new DateTime('2025-03-23'),
+        amount: Money::CZK(79950),
+    ),
+)->withVariableSymbol(20250323001);
+```
 
 ---
 
